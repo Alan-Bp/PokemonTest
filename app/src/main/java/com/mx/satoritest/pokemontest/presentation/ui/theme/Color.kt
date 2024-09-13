@@ -1,4 +1,4 @@
-package com.mx.satoritest.pokemontest.ui.theme
+package com.mx.satoritest.pokemontest.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
