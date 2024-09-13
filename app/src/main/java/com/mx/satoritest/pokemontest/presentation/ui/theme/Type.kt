@@ -1,4 +1,4 @@
-package com.mx.satoritest.pokemontest.ui.theme
+package com.mx.satoritest.pokemontest.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
