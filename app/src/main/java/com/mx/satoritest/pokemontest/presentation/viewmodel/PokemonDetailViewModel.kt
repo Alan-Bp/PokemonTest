@@ -11,21 +11,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class PokemonDetailViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
     private val _pokemonDetail = MutableStateFlow<Pokemon?>(null)
     val pokemonDetail: StateFlow<Pokemon?> = _pokemonDetail
-
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
-
     fun loadPokemonDetail(id: Int) {
         viewModelScope.launch {
-            val detail = pokemonRepository.getPokemonDetails(id)
-            _pokemonDetail.value = detail
+            pokemonRepository.getPokemonDetails(id).collect { detail ->
+                _pokemonDetail.value = detail
+            }
         }
     }
 
@@ -47,5 +45,4 @@ class PokemonDetailViewModel @Inject constructor(
             _isFavorite.value = !currentFavoriteState
         }
     }
-
 }

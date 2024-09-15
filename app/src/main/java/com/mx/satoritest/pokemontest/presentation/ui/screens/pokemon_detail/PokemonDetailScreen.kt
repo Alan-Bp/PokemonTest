@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.mx.satoritest.pokemontest.presentation.viewmodel.PokemonDetailViewModel
 import com.mx.satoritest.pokemontest.presentation.viewmodel.ViewModelFactory
-import com.mx.test.pokemonapp.data.repository.AppContainer
+import com.mx.satoritest.pokemontest.data.repository.AppContainer
 
 @Composable
 fun PokemonDetailScreen(

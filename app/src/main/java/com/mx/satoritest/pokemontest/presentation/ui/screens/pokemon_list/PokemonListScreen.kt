@@ -1,5 +1,7 @@
 package com.mx.satoritest.pokemontest.presentation.ui.screens.pokemon_list
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,8 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +42,8 @@ import com.mx.satoritest.pokemontest.R
 import com.mx.satoritest.pokemontest.domain.model.Pokemon
 import com.mx.satoritest.pokemontest.presentation.ui.components.CircularImage
 import com.mx.satoritest.pokemontest.presentation.ui.components.getInitials
+import com.mx.satoritest.pokemontest.presentation.ui.theme.LightBlue
+import com.mx.satoritest.pokemontest.presentation.ui.theme.RedLight
 import com.mx.satoritest.pokemontest.presentation.viewmodel.PokemonListViewModel
 
 @Composable
@@ -48,11 +54,9 @@ fun PokemonListScreen(
 ) {
     val pokemonList by viewModel.pokemonList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-
     val lazyGridState = rememberLazyGridState()
-
-    val backgroundColor = Color(0xFFE8F5E9)
-    val titleColor = Color(0xFF1B5E20)
+    val backgroundColor = LightBlue
+    val titleColor = Color.White
 
     Box(
         modifier = modifier
@@ -63,15 +67,12 @@ fun PokemonListScreen(
             Text(
                 text = "PokeDex",
                 color = titleColor,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-                    .background(Color.Transparent)
-                    .padding(vertical = 8.dp),
+                    .background(RedLight),
                 textAlign = TextAlign.Center
             )
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -92,7 +93,7 @@ fun PokemonListScreen(
                             state = lazyGridState,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(bottom = 48.dp)
+                                .padding(bottom = 5.dp)
                         ) {
                             items(pokemonList) { pokemon ->
                                 var isFavorite by remember { mutableStateOf(false) }
@@ -106,7 +107,6 @@ fun PokemonListScreen(
                                 )
                             }
                         }
-
                         if (isLoading) {
                             Box(
                                 modifier = Modifier
@@ -118,12 +118,16 @@ fun PokemonListScreen(
                                 CircularProgressIndicator()
                             }
                         }
-
                         LaunchedEffect(lazyGridState.firstVisibleItemIndex) {
                             val lastVisibleItemIndex =
                                 lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                            Log.d(
+                                "PokemonListScreen",
+                                "Last visible item index: $lastVisibleItemIndex"
+                            )
                             if (lastVisibleItemIndex != null) {
                                 if (lastVisibleItemIndex >= pokemonList.size - 1 && !isLoading) {
+                                    Log.d("PokemonListScreen", "Loading more Pokémon")
                                     viewModel.loadMorePokemons()
                                 }
                             }
@@ -153,8 +157,7 @@ fun PokemonListItem(
     val imageModifier = Modifier
         .size(100.dp)
         .clip(CircleShape)
-        .border(2.dp, Color.Gray, CircleShape)
-        .background(Color.Gray)
+        .border(2.dp, Color.Black, CircleShape)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,11 +165,24 @@ fun PokemonListItem(
             .padding(8.dp)
             .clickable { onClick(pokemon.id) }
     ) {
-        CircularImage(
-            imageUrl = pokemon.imageUrl,
-            initials = getInitials(pokemon.name),
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = imageModifier
-        )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.pokeball_background),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(0.5f),
+                contentScale = ContentScale.Crop
+            )
+            CircularImage(
+                imageUrl = pokemon.imageUrl,
+                initials = getInitials(pokemon.name),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = pokemon.name,
