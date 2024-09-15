@@ -3,9 +3,9 @@ package com.mx.satoritest.pokemontest.di
 import android.content.Context
 import com.mx.satoritest.pokemontest.data.local.PokemonDatabase
 import com.mx.satoritest.pokemontest.data.remote.PokeApiService
+import com.mx.satoritest.pokemontest.data.repository.PokemonRepositoryImpl
 import com.mx.satoritest.pokemontest.domain.repository.PokemonRepository
 import com.mx.satoritest.pokemontest.domain.usescase.GetPokemonListUseCase
-import com.mx.test.pokemonapp.data.repository.PokemonRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,11 +15,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     @Singleton
     fun providePokemonDatabase(@ApplicationContext appContext: Context): PokemonDatabase {
