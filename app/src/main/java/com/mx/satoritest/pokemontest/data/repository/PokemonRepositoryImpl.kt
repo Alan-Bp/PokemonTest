@@ -1,4 +1,4 @@
-package com.mx.test.pokemonapp.data.repository
+package com.mx.satoritest.pokemontest.data.repository
 
 import android.util.Log
 import com.mx.satoritest.pokemontest.data.local.FavoritePokemonEntity
@@ -8,6 +8,8 @@ import com.mx.satoritest.pokemontest.data.remote.mapToDomain
 import com.mx.satoritest.pokemontest.data.remote.toPokemon
 import com.mx.satoritest.pokemontest.domain.model.Pokemon
 import com.mx.satoritest.pokemontest.domain.repository.PokemonRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class PokemonRepositoryImpl @Inject constructor(
@@ -41,19 +43,19 @@ class PokemonRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPokemonDetails(id: Int): Pokemon {
-        return try {
+    override suspend fun getPokemonDetails(id: Int): Flow<Pokemon> = flow {
+        try {
             val response = apiService.getPokemonDetails(id)
             val pokemon = response.toPokemon()
             Log.d("PokemonRepositoryImpl", "Pokemon fetched: $pokemon")
             pokemonDao.insertPokemons(listOf(pokemon.toEntity()))
-            pokemon
+            emit(pokemon)
         } catch (e: Exception) {
             Log.e("PokemonRepositoryImpl", "Error fetching Pokémon details", e)
             val cachedPokemon = pokemonDao.getPokemonById(id)?.toPokemon()
                 ?: throw Exception("Pokemon not found")
             Log.d("PokemonRepositoryImpl", "Pokemon from cache: $cachedPokemon")
-            cachedPokemon
+            emit(cachedPokemon)
         }
     }
 

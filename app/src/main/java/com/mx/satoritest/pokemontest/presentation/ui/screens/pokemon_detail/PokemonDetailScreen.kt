@@ -19,12 +19,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import com.mx.satoritest.pokemontest.data.repository.AppContainer
+import com.mx.satoritest.pokemontest.presentation.ui.theme.PokemonAppTheme
 import com.mx.satoritest.pokemontest.presentation.viewmodel.PokemonDetailViewModel
 import com.mx.satoritest.pokemontest.presentation.viewmodel.ViewModelFactory
-import com.mx.test.pokemonapp.data.repository.AppContainer
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPokemonDetailScreen() {
+    PokemonAppTheme {
+        PokemonDetailScreen(pokemonId = 1)
+    }
+}
 
 @Composable
 fun PokemonDetailScreen(
@@ -34,15 +44,12 @@ fun PokemonDetailScreen(
     val viewModel: PokemonDetailViewModel = viewModel(
         factory = ViewModelFactory(pokemonRepository)
     )
-
     val pokemon by viewModel.pokemonDetail.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
-
     LaunchedEffect(pokemonId) {
         viewModel.loadPokemonDetail(pokemonId)
         viewModel.checkIfFavorite(pokemonId)
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +64,7 @@ fun PokemonDetailScreen(
         ) {
             pokemon?.let { pokemonDetail ->
                 Image(
-                    painter = rememberImagePainter(pokemonDetail.imageUrl),
+                    painter = rememberAsyncImagePainter(pokemonDetail.imageUrl),
                     contentDescription = pokemonDetail.name,
                     modifier = Modifier
                         .size(150.dp)
