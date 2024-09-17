@@ -35,15 +35,20 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mx.satoritest.pokemontest.R
 import com.mx.satoritest.pokemontest.domain.model.Pokemon
+import com.mx.satoritest.pokemontest.domain.usescase.GetPokemonListUseCase
 import com.mx.satoritest.pokemontest.presentation.ui.components.CircularImage
 import com.mx.satoritest.pokemontest.presentation.ui.components.getInitials
 import com.mx.satoritest.pokemontest.presentation.ui.theme.LightBlue
 import com.mx.satoritest.pokemontest.presentation.ui.theme.RedLight
+import com.mx.satoritest.pokemontest.presentation.viewmodel.MockPokemonRepository
+import com.mx.satoritest.pokemontest.presentation.viewmodel.MockPreviewVM
 import com.mx.satoritest.pokemontest.presentation.viewmodel.PokemonListViewModel
 
 @Composable
@@ -57,7 +62,6 @@ fun PokemonListScreen(
     val lazyGridState = rememberLazyGridState()
     val backgroundColor = LightBlue
     val titleColor = Color.White
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -76,7 +80,6 @@ fun PokemonListScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
             ) {
                 when {
                     isLoading && pokemonList.isEmpty() -> {
@@ -93,7 +96,6 @@ fun PokemonListScreen(
                             state = lazyGridState,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(bottom = 5.dp)
                         ) {
                             items(pokemonList) { pokemon ->
                                 var isFavorite by remember { mutableStateOf(false) }
@@ -154,8 +156,9 @@ fun PokemonListItem(
     isFavorite: Boolean,
     onClick: (Int) -> Unit
 ) {
+    val isSmallScreen = LocalConfiguration.current.screenWidthDp < 360
     val imageModifier = Modifier
-        .size(100.dp)
+        .size(if (isSmallScreen) 64.dp else 90.dp)
         .clip(CircleShape)
         .border(2.dp, Color.Black, CircleShape)
 
@@ -198,4 +201,13 @@ fun PokemonListItem(
             modifier = Modifier.size(24.dp)
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPokemonListScreen() {
+    PokemonListScreen(
+        viewModel = MockPreviewVM(GetPokemonListUseCase(MockPokemonRepository())),
+        onPokemonClick = {}
+    )
 }

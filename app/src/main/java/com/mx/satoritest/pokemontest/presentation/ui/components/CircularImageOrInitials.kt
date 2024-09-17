@@ -40,7 +40,7 @@ fun CircularImage(
             .data(if (isImageUrlValid) imageUrl else null)
             .crossfade(true)
             .placeholder(R.drawable.ic_placeholder)
-            .error(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_error_placeholder)
             .build(),
         onError = {
             hasError = true
